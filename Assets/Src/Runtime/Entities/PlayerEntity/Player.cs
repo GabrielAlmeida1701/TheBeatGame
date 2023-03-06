@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Hypergame.Entities.NPCs;
 using UnityEngine;
 
 namespace Hypergame.Entities.PlayerEntity
@@ -8,8 +7,11 @@ namespace Hypergame.Entities.PlayerEntity
     {
         [SerializeField] private Animator animator;
         [SerializeField] private StackController stackController;
-
+        [SerializeField] private Material skinMaterial;
+        
         public float speed = 3;
+        public float punchForce = 500;
+        public int stackLimit = 3;
 
         private Vector2 direction;
         private bool moving;
@@ -24,12 +26,36 @@ namespace Hypergame.Entities.PlayerEntity
 
         private void Update()
         {
-            Vector3 inputDirection = new Vector3(direction.x, transform.position.y, direction.y);
-
             if (moving)
             {
+                Vector3 inputDirection = new Vector3(direction.x, transform.position.y, direction.y);
+
                 transform.LookAt(transform.position + inputDirection);
                 transform.Translate(0, 0, speed * Time.deltaTime);
+            }
+        }
+
+        public void UpdateColor(Color color)
+        {
+            skinMaterial.color = color;
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            if (other.gameObject.TryGetComponent(out BasicNPC npc))
+                npc.ToggleRagdoll(transform.forward * punchForce);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (stackController.StackCount >= stackLimit)
+                return;
+
+            BasicNPC npc = other.GetComponentInParent<BasicNPC>();
+            if (npc)
+            {
+                npc.PickUpNPC();
+                stackController.AddToPile(npc.transform);
             }
         }
     }

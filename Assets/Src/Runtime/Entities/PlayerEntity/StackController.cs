@@ -11,6 +11,8 @@ namespace Hypergame.Entities.PlayerEntity
 
         private Knod[] knods;
 
+        public int StackCount => stackParent.childCount;
+
         private void Start()
         {
             knods = stackParent.GetComponentsInChildren<Knod>();
@@ -32,19 +34,17 @@ namespace Hypergame.Entities.PlayerEntity
             }
         }
 
-        private void Update()
+        public void AddToPile(Transform transform)
         {
-            int i = 0;
-            foreach (Knod knod in knods)
-            {
-                knod.target = transform;
-                knod.speed = speed * i;
-                knod.distance = minDistance;
-                knod.maxDistance = maxDistance;
+            int childCount = stackParent.childCount;
+            Transform target = childCount == 0 ? this.transform : stackParent.GetChild(childCount - 1);
 
-                i++;
-            }
+            Knod knod = transform.gameObject.AddComponent<Knod>();
+            transform.parent = stackParent;
+            knod.target = target;
+            knod.speed = speed * childCount;
+            knod.distance = minDistance;
+            knod.maxDistance = maxDistance;
         }
     }
-
 }

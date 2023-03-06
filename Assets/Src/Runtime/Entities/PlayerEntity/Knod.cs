@@ -12,7 +12,7 @@ namespace Hypergame.Entities.PlayerEntity
 
         private Vector3 velocity;
 
-        void FixedUpdate()
+        void LateUpdate()
         {
             if (!target) return;
 
