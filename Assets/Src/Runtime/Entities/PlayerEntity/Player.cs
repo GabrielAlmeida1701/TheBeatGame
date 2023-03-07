@@ -21,6 +21,7 @@ namespace Hypergame.Entities.PlayerEntity
 
         private Vector2 direction;
         private bool moving;
+        private BasicNPC targetNPC;
 
         public int StackLimit => data.stackLimit;
         public int Points => data.points;
@@ -72,10 +73,19 @@ namespace Hypergame.Entities.PlayerEntity
 
         public bool IsColorUnlocked(int colorId) => (bool) data.colors?.Contains(colorId);
 
+        public void PunchNPC()
+        {
+            targetNPC.ToggleRagdoll(transform.forward * punchForce);
+            targetNPC = null;
+        }
+
         private void OnCollisionEnter(Collision other)
         {
             if (other.gameObject.TryGetComponent(out BasicNPC npc))
-                npc.ToggleRagdoll(transform.forward * punchForce);
+            {
+                animator.SetTrigger("Punch");
+                targetNPC = npc;
+            }
         }
 
         private void OnTriggerEnter(Collider other)
