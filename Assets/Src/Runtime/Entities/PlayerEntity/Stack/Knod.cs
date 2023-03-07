@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Hypergame.Entities.PlayerEntity
+namespace Hypergame.Entities.PlayerEntity.Stack
 {
     public class Knod : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Hypergame.Entities.PlayerEntity
+namespace Hypergame.Entities.PlayerEntity.Stack
 {
     public class StackController : MonoBehaviour
     {
@@ -45,6 +45,12 @@ namespace Hypergame.Entities.PlayerEntity
             knod.speed = speed * childCount;
             knod.distance = minDistance;
             knod.maxDistance = maxDistance;
+        }
+
+        public void ClearStack()
+        {
+            foreach (Transform child in stackParent)
+                Destroy(child.gameObject);
         }
     }
 }

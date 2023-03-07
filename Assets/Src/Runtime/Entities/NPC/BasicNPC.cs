@@ -73,6 +73,7 @@ namespace Hypergame.Entities.NPCs
         public void PickUpNPC()
         {
             hipsRb.transform.localPosition = Vector3.zero;
+            hipsRb.transform.localEulerAngles = new Vector3(0, 0, Random.Range(90f, 270f));
             hipsRb.useGravity = false;
             hipsRb.isKinematic = true;
 
