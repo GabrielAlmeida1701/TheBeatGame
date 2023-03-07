@@ -1,7 +1,9 @@
-using Hypergame.Entities.NPCs;
+using Hypergame.Entities.NPC;
 using Hypergame.Entities.Persistance;
 using Hypergame.Entities.PlayerEntity.Stack;
 using UnityEngine;
+using TMPro;
+using Hypergame.Environment;
 
 namespace Hypergame.Entities.PlayerEntity
 {
@@ -11,6 +13,8 @@ namespace Hypergame.Entities.PlayerEntity
         [SerializeField] private Animator animator;
         [SerializeField] private StackController stackController;
         [SerializeField] private Material skinMaterial;
+        [SerializeField] private TextMeshProUGUI coinsLabel;
+        [SerializeField] private new CameraFollow camera;
         
         [Header("Gameplay Values")]
         public float speed = 3;
@@ -42,13 +46,12 @@ namespace Hypergame.Entities.PlayerEntity
 
         private void Update()
         {
-            if (moving)
-            {
-                Vector3 inputDirection = new Vector3(direction.x, transform.position.y, direction.y);
+            if (!moving)
+                return;
 
-                transform.LookAt(transform.position + inputDirection);
-                transform.Translate(0, 0, speed * Time.deltaTime);
-            }
+            Vector3 inputDirection = new Vector3(direction.x, transform.position.y, direction.y);
+            transform.LookAt(transform.position + inputDirection);
+            transform.Translate(0, 0, speed * Time.deltaTime);
         }
 
         public void UpdateColor(Color color, int activeId, int cost)
@@ -56,7 +59,7 @@ namespace Hypergame.Entities.PlayerEntity
             if (!data.colors.Contains(activeId))
                 data.colors.Add(activeId);
 
-            data.points -= cost;
+            UpdatePoints(-cost);
             data.activeColor = activeId;
             skinMaterial.color = color;
 
@@ -65,7 +68,7 @@ namespace Hypergame.Entities.PlayerEntity
 
         public void IncreaseStackLimit(int cost)
         {
-            data.points -= cost;
+            UpdatePoints(-cost);
             data.stackLimit++;
 
             PersistanceManager.SavePlayerData(data);
@@ -75,14 +78,25 @@ namespace Hypergame.Entities.PlayerEntity
 
         public void PunchNPC()
         {
+            if (!targetNPC) return;
+
+            camera.ShakeCamera();
             targetNPC.ToggleRagdoll(transform.forward * punchForce);
             targetNPC = null;
+        }
+
+        private void UpdatePoints(int ammount)
+        {
+            data.points += ammount;
+            coinsLabel.text = data.points.ToString();
         }
 
         private void OnCollisionEnter(Collision other)
         {
             if (other.gameObject.TryGetComponent(out BasicNPC npc))
             {
+                if (targetNPC) targetNPC.ToggleCollider(true);
+                npc.ToggleCollider(false);
                 animator.SetTrigger("Punch");
                 targetNPC = npc;
             }
@@ -92,7 +106,7 @@ namespace Hypergame.Entities.PlayerEntity
         {
             if (other.gameObject.CompareTag("Shop"))
             {
-                data.points += stackController.StackCount;
+                UpdatePoints(stackController.StackCount);
                 stackController.ClearStack();
                 PersistanceManager.SavePlayerData(data);
                 return;

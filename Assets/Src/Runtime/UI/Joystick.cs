@@ -8,23 +8,36 @@ namespace Hypergame.UI
     public class Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         public float movRadius = 100f;
+        public GameObject stick;
         public GameObject knob;
         public UnityEvent<Vector2> getDelta;
 
+        private Canvas canvas;
+        private Vector2 originalPosition;
         private Vector2 origin;
         private bool trackPointer;
 
         private RectTransform knobTransform => knob.transform as RectTransform;
+        private RectTransform StickTransform => stick.transform as RectTransform;
+
+        private void Start()
+        {
+            originalPosition = StickTransform.anchoredPosition;
+            canvas = GetComponentInParent<Canvas>();
+        }
 
         public void OnPointerDown(PointerEventData eventData)
         {
             trackPointer = true;
             origin = GetMousePosition();
+            StickTransform.anchoredPosition = origin / canvas.transform.lossyScale;
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            StickTransform.anchoredPosition = originalPosition;
             knob.transform.localPosition = Vector3.zero;
+
             getDelta?.Invoke(Vector2.zero);
             trackPointer = false;
         }
@@ -40,7 +53,6 @@ namespace Hypergame.UI
             Vector2 position = GetMousePosition();
 
             var target = CalcMoviment(position);
-            print(target == position);
             knobTransform.anchoredPosition = target - origin;
 
             if (gameObject.activeSelf) getDelta?.Invoke((target - origin).normalized);

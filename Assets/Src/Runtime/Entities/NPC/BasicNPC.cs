@@ -1,19 +1,34 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
-namespace Hypergame.Entities.NPCs
+namespace Hypergame.Entities.NPC
 {
+    [RequireComponent(typeof(NavMeshAgent))]
     public class BasicNPC : MonoBehaviour
     {
         private readonly string EnablePickup = nameof(EnablePickupCollider);
 
+        [Header("Acessories")]
         [SerializeField] private GameObject[] headAcessories;
         [SerializeField] private GameObject[] faceAcessories;
         [SerializeField] private GameObject[] bodyAcessories;
         [SerializeField] private Material[] materials;
+
+        [Header("Settings")]
         [SerializeField] private Rigidbody hipsRb;
         [SerializeField] private SphereCollider pickupTrigger;
         [SerializeField] private Animator animator;
         [SerializeField] private float delayOnPuched = 1f;
+
+        [Header("Moviment Settings")]
+        [SerializeField] private float minWaitTime = 1.0f;
+        [SerializeField] private float maxWaitTime = 3.0f;
+        [SerializeField] private float movementSpeed = 3.0f;
+        [SerializeField] private NavMeshAgent agent;
+
+        [HideInInspector]
+        public NPCSpawner spawner;
 
         private Rigidbody[] rigidbodies;
         private Collider[] colliders;
@@ -34,6 +49,8 @@ namespace Hypergame.Entities.NPCs
             ToggleAcessories(headAcessories);
             ToggleAcessories(faceAcessories);
             ToggleAcessories(bodyAcessories);
+
+            StartCoroutine(RandomMovement());
         }
 
         private void ToggleAcessories(GameObject[] list)
@@ -60,13 +77,20 @@ namespace Hypergame.Entities.NPCs
             foreach (var coll in colliders)
                 coll.enabled = active;
 
-            colliders[0].enabled = !active;
+            ToggleCollider(!active);
             pickupTrigger.enabled = false;
             animator.enabled = !active;
 
             if (active)
+            {
                 Invoke(EnablePickup, delayOnPuched);
+                StopAllCoroutines();
+                agent.isStopped = true;
+                agent.enabled = false;
+            }
         }
+
+        public void ToggleCollider(bool active) => colliders[0].enabled = active;
 
         private void EnablePickupCollider() => pickupTrigger.enabled = true;
 
@@ -78,6 +102,29 @@ namespace Hypergame.Entities.NPCs
             hipsRb.isKinematic = true;
 
             pickupTrigger.enabled = false;
+            spawner.RemoveEntity(this);
+        }
+
+        private IEnumerator RandomMovement()
+        {
+            while (true)
+            {
+                Vector3 randomPoint = RandomNavmeshLocation();
+                agent.SetDestination(randomPoint);
+                animator.SetBool("Walking", true);
+                yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.1f);
+
+                animator.SetBool("Walking", false);
+                float waitTime = Random.Range(minWaitTime, maxWaitTime);
+                yield return new WaitForSeconds(waitTime);
+            }
+        }
+
+        private Vector3 RandomNavmeshLocation()
+        {
+            Vector3 randomDirection = (Random.insideUnitSphere * spawner.walkableArea) + spawner.transform.position;
+            NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, 10.0f, NavMesh.AllAreas);
+            return hit.position;
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Hypergame.Entities.PlayerEntity.Stack
         private void Start()
         {
             knods = stackParent.GetComponentsInChildren<Knod>();
+            if (knods.Length == 0) return;
+
             Transform lastKnod = knods[0].transform;
 
             int i = 0;

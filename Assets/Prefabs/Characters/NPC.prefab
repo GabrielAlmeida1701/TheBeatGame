@@ -210,7 +210,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6629374649034236010, guid: 43c644ebce2c71a42b8a219fa17ad581, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.1650558
+      value: 2.2948358
       objectReference: {fileID: 0}
     - target: {fileID: 6629374649034236010, guid: 43c644ebce2c71a42b8a219fa17ad581, type: 3}
       propertyPath: m_LocalPosition.y
@@ -218,7 +218,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6629374649034236010, guid: 43c644ebce2c71a42b8a219fa17ad581, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.75
+      value: 2.510392
       objectReference: {fileID: 0}
     - target: {fileID: 6629374649034236010, guid: 43c644ebce2c71a42b8a219fa17ad581, type: 3}
       propertyPath: m_LocalRotation.w
@@ -504,6 +504,41 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7663750829261492857, guid: 43c644ebce2c71a42b8a219fa17ad581, type: 3}
   m_PrefabInstance: {fileID: 5693927101124974925}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &1537619305
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2693144063447305012}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2.8865244, z: 0.68008167}
+  m_Center: {x: 0, y: 1.4013072, z: 0}
+--- !u!195 &-4835203873347286521
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2693144063447305012}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 360
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2.6
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!114 &1537619302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -550,19 +585,12 @@ MonoBehaviour:
   hipsRb: {fileID: 1802623262}
   pickupTrigger: {fileID: 39011482}
   animator: {fileID: 9047347204556641373}
---- !u!65 &1537619305
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2693144063447305012}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 2.8865244, z: 0.68008167}
-  m_Center: {x: 0, y: 1.4013072, z: 0}
+  delayOnPuched: 1
+  minWaitTime: 1
+  maxWaitTime: 3
+  movementSpeed: 3
+  agent: {fileID: -4835203873347286521}
+  spawner: {fileID: 0}
 --- !u!1 &2837324425205528075 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7522373741124005702, guid: 43c644ebce2c71a42b8a219fa17ad581, type: 3}
