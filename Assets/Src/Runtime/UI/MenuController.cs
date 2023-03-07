@@ -13,8 +13,11 @@ namespace Hypergame.UI
         [SerializeField] private TextMeshProUGUI stackLimit;
         [SerializeField] private Transform colorParent;
         [SerializeField] private Player player;
+        [SerializeField] private float stackCostIncrease = 1.5f;
 
         private ColorOptionBnt selected;
+
+        private int StackIncreaseCost => (int)(player.StackLimit * stackCostIncrease);
 
         private void Start()
         {
@@ -66,14 +69,13 @@ namespace Hypergame.UI
 
         public void AddStackLimit()
         {
-            int cost = player.StackLimit * 2;
-            if (player.Points < cost)
+            if (player.Points < StackIncreaseCost)
                 return;
 
-            player.IncreaseStackLimit(cost);
+            player.IncreaseStackLimit(StackIncreaseCost);
             UpdateStackLimitLabel();
         }
 
-        private string UpdateStackLimitLabel() => stackLimit.text = $"Stack Limit: {player.StackLimit}\nCost: {player.StackLimit * 2}";
+        private string UpdateStackLimitLabel() => stackLimit.text = $"Stack Limit: {player.StackLimit}\nCost: {StackIncreaseCost}";
     }
 }
